@@ -6,7 +6,7 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "FindFrozenRabbitLocation.generated.h"
 
-class ABasePlayerController;
+class ARabbit;
 
 UCLASS()
 class RABBITSURVIVAL_API UFindFrozenRabbitLocation : public UBTTaskNode
@@ -22,5 +22,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FBlackboardKeySelector LocationKey;
 
-	ABasePlayerController* BasePC;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FBlackboardKeySelector RabbitToRescue;
+
+	ARabbit* FrozenRabbit;
 };

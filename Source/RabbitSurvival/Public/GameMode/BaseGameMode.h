@@ -95,6 +95,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void InitGameMode();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetHoleAndLaunchSaves();
+
 	UFUNCTION(BlueprintCallable)
 	void RabbitsPayOff();
 
@@ -116,6 +122,12 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Meta")
 	int32 RandomNonPayoffRabbitsCount {0};
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Initialization", meta = (ClampMin = "1.0", ClampMax = "5.0"))
+	float InitDelay {2.f};
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Game Entities")
+	ALivingHole* LivingHole;
+
 private:
 	UFUNCTION()
 	void SomeoneHasComeForRabbits();
@@ -129,8 +141,6 @@ private:
 	TArray<FName> CollectorRowNames;
 
 	FRabbitsCollectorEventsData* CollectorCurrentRow;
-
-	ALivingHole* LivingHole;
 
 	TSubclassOf<ALivingHole> LivingHoleClass = ALivingHole::StaticClass();
 };

@@ -6,7 +6,6 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "TakeFrozenRabbit.generated.h"
 
-class ABasePlayerController;
 class ARabbit;
 
 UCLASS()
@@ -20,6 +19,8 @@ public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 protected:
-	ABasePlayerController* BasePC;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FBlackboardKeySelector RabbitToRescue;
+
 	ARabbit* FrozenRabbit;
 };

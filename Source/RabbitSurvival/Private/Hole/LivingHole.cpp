@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Hole/LivingHole.h"
 #include "Auxiliaries/RabbitUtilities.h"
 #include "Components/BoxComponent.h"
@@ -25,8 +24,6 @@ void ALivingHole::BeginPlay()
 			PropertiesRow = GameConstProperties->FindRow<FGameConstProperties>(PropertiesRowNames[0], "");
 		}
 	}
-
-	//InitHole();
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ALivingHole::OnLivingHoleOverlap);
 

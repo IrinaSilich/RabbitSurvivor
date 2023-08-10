@@ -13,6 +13,16 @@ void ABaseGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FTimerHandle InitTimer;
+	GetWorldTimerManager().SetTimer(InitTimer, this, &ABaseGameMode::InitGameMode, InitDelay, false);
+
+	CollectorRowNames = RabbitsCollectorEventsData->GetRowNames();
+
+	GetCollectorGurrentRow(CollectorCurrentRowIndex);
+}
+
+void ABaseGameMode::InitGameMode()
+{
 	LivingHole = Cast<ALivingHole>(UGameplayStatics::GetActorOfClass(GetWorld(), LivingHoleClass));
 
 	if (LivingHole)
@@ -23,9 +33,7 @@ void ABaseGameMode::BeginPlay()
 		LivingHole->OnDecreaseSickRabbitsCount.AddUObject(this, &ABaseGameMode::DecreaseSickRabbitsCount);
 	}
 
-	CollectorRowNames = RabbitsCollectorEventsData->GetRowNames();
-
-	GetCollectorGurrentRow(CollectorCurrentRowIndex);
+	SetHoleAndLaunchSaves();
 }
 
 void ABaseGameMode::GetCollectorGurrentRow(int32 CollectorRowIndex)
@@ -48,7 +56,6 @@ void ABaseGameMode::SomeoneHasComeForRabbits()
 		RabbitsAreTaken(CollectorCurrentRowIndex);
 		CollectorCurrentRowIndex++;
 		OnCollectorRowIndexChanged.Broadcast(CollectorCurrentRowIndex);
-		//GetCollectorGurrentRow(CollectorCurrentRowIndex);
 	}
 }
 
@@ -86,25 +93,26 @@ void ABaseGameMode::RabbitsPayOff()
 		return;
 	}
 
-	TArray<FRabbitParameters> RabbitsParameters = LivingHole->GetRabbitsParameters();
+	const TArray<FRabbitParameters>& RabbitsParameters = LivingHole->GetRabbitsParameters();
+	int32 CurrentPayoffCount = CollectorCurrentRow->PayoffRabbitsCount;
+	TArray<FRabbitParameters> AuxiliaryRabbitsParameters;
 
-	if (RabbitsParameters.Num() == CollectorCurrentRow->PayoffRabbitsCount)
+	if (RabbitsParameters.Num() > CurrentPayoffCount)
 	{
-		RabbitsParameters.Empty();
-	}
-	else
-	{
-		for (int32 i = 0; i < CollectorCurrentRow->PayoffRabbitsCount; i++)
+		for (int32 i = 0; i < RabbitsParameters.Num() - CurrentPayoffCount; i++)
 		{
 			if (RabbitsParameters.IsValidIndex(i))
 			{
-				RabbitsParameters.RemoveAt(i);
+				AuxiliaryRabbitsParameters.Add(RabbitsParameters[i]);
 			}
 		}
 	}
+	else
+	{
+		AuxiliaryRabbitsParameters.Empty();
+	}
 
-	LivingHole->SetRabbitsParameters(RabbitsParameters);
-
+	LivingHole->SetRabbitsParameters(AuxiliaryRabbitsParameters);
 	LivingHole->TotalRabbitsCount = RabbitsParameters.Num();
 }
 
@@ -115,27 +123,26 @@ void ABaseGameMode::RabbitsRefuseToPayOff()
 		return;
 	}
 
-	TArray<FRabbitParameters> RabbitsParameters = LivingHole->GetRabbitsParameters();
-
+	const TArray<FRabbitParameters>& RabbitsParameters = LivingHole->GetRabbitsParameters();
+	TArray<FRabbitParameters> AuxiliaryRabbitsParameters;
 	RandomNonPayoffRabbitsCount = FMath::RandRange(CollectorCurrentRow->NonPayoffRabbitsCountMin, CollectorCurrentRow->NonPayoffRabbitsCountMax);
 
-	if (RabbitsParameters.Num() <= RandomNonPayoffRabbitsCount)
+	if (RabbitsParameters.Num() > RandomNonPayoffRabbitsCount)
 	{
-		RandomNonPayoffRabbitsCount = RabbitsParameters.Num();
-		RabbitsParameters.Empty();
-	}
-	else
-	{
-		for (int32 i = 0; i < RandomNonPayoffRabbitsCount; i++)
+		for (int32 i = 0; i < RabbitsParameters.Num() - RandomNonPayoffRabbitsCount; i++)
 		{
 			if (RabbitsParameters.IsValidIndex(i))
 			{
-				RabbitsParameters.RemoveAt(i);
+				AuxiliaryRabbitsParameters.Add(RabbitsParameters[i]);
 			}
 		}
 	}
+	else
+	{
+		AuxiliaryRabbitsParameters.Empty();
+		RandomNonPayoffRabbitsCount = RabbitsParameters.Num();
+	}
 	
-	LivingHole->SetRabbitsParameters(RabbitsParameters);
-
+	LivingHole->SetRabbitsParameters(AuxiliaryRabbitsParameters);
 	LivingHole->TotalRabbitsCount = RabbitsParameters.Num();
 }

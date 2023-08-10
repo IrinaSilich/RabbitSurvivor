@@ -103,7 +103,7 @@ protected:
 	FTimerHandle HealCheckTimer;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "General Rabbit Data")
-	FRabbitParameters StartParameters = { RabbitClass::General, RabbitActivity::None, 100.f, false, false, false, nullptr, nullptr };
+	FRabbitParameters StartParameters = { RabbitClass::General, RabbitActivity::None, 100.f, false, false, false, false, nullptr, nullptr };
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "General Rabbit Data")
 	FRabbitParameters AssignedParameters;

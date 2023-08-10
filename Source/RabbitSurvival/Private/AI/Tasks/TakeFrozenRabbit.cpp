@@ -1,11 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AI/Tasks/TakeFrozenRabbit.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "FoodSpot/FoodSpot.h"
-#include "PlayerController/BasePlayerController.h"
 #include "Rabbit/Rabbit.h"
-#include "Kismet/GameplayStatics.h"
 
 UTakeFrozenRabbit::UTakeFrozenRabbit()
 {
@@ -14,10 +12,10 @@ UTakeFrozenRabbit::UTakeFrozenRabbit()
 
 EBTNodeResult::Type UTakeFrozenRabbit::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	BasePC = Cast<ABasePlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (!BasePC) return EBTNodeResult::Failed;
+	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
+	if (!Blackboard) return EBTNodeResult::Failed;
 
-	FrozenRabbit = BasePC->GetFrozenRabbit();
+	FrozenRabbit = Cast<ARabbit>(Blackboard->GetValueAsObject(RabbitToRescue.SelectedKeyName));
 	if (!FrozenRabbit) return EBTNodeResult::Failed;
 	 
 	FRabbitParameters FrozenRabbitParameters = FrozenRabbit->GetRabbitParameters();

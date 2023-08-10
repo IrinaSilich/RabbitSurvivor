@@ -6,6 +6,8 @@
 #include "Engine/GameInstance.h"
 #include "BaseGameInstance.generated.h"
 
+class ALivingHole;
+
 UCLASS()
 class RABBITSURVIVAL_API UBaseGameInstance : public UGameInstance
 {
@@ -14,9 +16,12 @@ class RABBITSURVIVAL_API UBaseGameInstance : public UGameInstance
 protected:
 	virtual void Init() override;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Save system")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Save System")
 	FString SaveSlot = "SavedGame";
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Save system", meta = (ClampMin = "30.0", ClampMax = "300.0"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Save System", meta = (ClampMin = "30.0", ClampMax = "300.0"))
 	float SaveGameInterval {30.f};
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Game Entities")
+	ALivingHole* LivingHole;
 };

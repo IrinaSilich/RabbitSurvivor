@@ -53,6 +53,9 @@ struct FRabbitParameters
 	bool IsSick;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	bool IsPendingRescue;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	AFoodSpot* AssignedFoodSpot;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
